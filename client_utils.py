@@ -31,15 +31,19 @@ def get_player_state(data):
 
 
 def set_player_move():
+    import random
     data = dict()
     data['header'] = 'MOVES'
     data['X'] = []
     data['Y'] = []
     data['VAL'] = [] # U/D/R/L
+    moves = ['D', 'R', 'U', 'L']
     for cell in my_cells:
-        data['X'].append(cell.X)
-        data['Y'].append(cell.Y)
-        data['VAL'].append('D')
+        move = random.randint(0,3)
+        data['X'].append(cell.x)
+        data['Y'].append(cell.y)
+        data['VAL'].append(moves[move])
+
     return data
 
 

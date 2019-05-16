@@ -1,25 +1,13 @@
 import json
 import pickle
-
+from game_show import Cell, cell_dict, cells
 n = 10
 m = 10
-cell_dict = dict()
-cells = []
 
 
-class Cell:
-    def __init__(self, x, y, val):
-        self.x = x
-        self.y = y
-        self.val = val
-
-
-def init_board():
-    for i in range(m):
-        for j in range(n):
-            p = Cell(i, j, '.')
-            cell_dict[(i,j)] = []
-            cell_dict[(i, j)] = p
+class Score:
+    scoreB = 0
+    scoreR = 0
 
 
 def check_and_send_info(data, con):
@@ -44,7 +32,7 @@ def check_and_send_info(data, con):
         print("message is unvalid")
 
 
-def send_player_vision(col):
+def send_player_vision(con, col):
     data = dict()
     data['header'] = 'VISION'
     data['X'] = []
@@ -77,17 +65,17 @@ def send_player_vision(col):
                 data['Y'].append(nei4.y)
                 data['VAL'].append(nei4.val)
 
-    return data
+    con.sendall((pickle.dumps(data)))
 
 
-def send_player_state(con, turn):
+def send_player_state(con, col):
     states = dict()
     states['header'] = 'STATE'
     states['X'] = []
     states['Y'] = []
     states['VAL'] = []
     for cell in cells:
-        if cell.val == turn:
+        if cell.val == col:
             states['X'].append(cell.x)
             states['Y'].append(cell.y)
             states['VAL'].append(cell.val)
@@ -101,27 +89,84 @@ def get_player_move(data, col):
 
     #TODO : Healer check
     for i in range(len(X)):
-        if val[i] == 'D':
-            x = X[i]
-            y = Y[i]
-            c = cell_dict.get((x+1, y))
-            if c and c.val == '.':
-                cell_dict[(x+1, y)].val = col
-        if val[i] == 'U':
-            x = X[i]
-            y = Y[i]
-            c = cell_dict.get((x-1, y))
-            if c and c.val == '.':
-                cell_dict[(x-1, y)].val = col
-        if val[i] == 'R':
-            x = X[i]
-            y = Y[i]
-            c = cell_dict.get((x, y+1))
-            if c and c.val == '.':
-                cell_dict[(x, y+1)].val = col
-        if val[i] == 'L':
-            x = X[i]
-            y = Y[i]
-            c = cell_dict.get((x, y-1))
-            if c and c.val == '.':
-                cell_dict[(x, y-1)].val = col
+
+        x = X[i]
+        y = Y[i]
+        here = cell_dict.get((x, y))
+        moved = False
+        if here:
+            if val[i] == 'D':
+                x = X[i]
+                y = Y[i]
+                c = cell_dict.get((x+1, y))
+
+                if c and c.val == '.':
+                    moved = True
+                    cell_dict[(x+1, y)].val = col
+                if c and c.val == 'b' and col == 'B':
+                    moved = True
+                    Score.scoreB += 10
+                    cell_dict[(x+1, y)].val = col
+
+                if c and c.val == 'r' and col == 'R':
+                    moved = True
+                    Score.scoreR += 10
+                    cell_dict[(x+1, y)].val = col
+
+
+            if val[i] == 'U':
+                x = X[i]
+                y = Y[i]
+                c = cell_dict.get((x-1, y))
+                if c and c.val == '.':
+                    moved = True
+                    cell_dict[(x-1, y)].val = col
+
+                if c and c.val == 'b' and col == 'B':
+                    moved = True
+                    Score.scoreB += 10
+                    cell_dict[(x-1, y)].val = col
+
+                if c and c.val == 'r' and col == 'R':
+                    Score.scoreR += 10
+                    cell_dict[(x-1, y)].val = col
+                    moved = True
+
+
+            if val[i] == 'R':
+                x = X[i]
+                y = Y[i]
+                c = cell_dict.get((x, y+1))
+                if c and c.val == '.':
+                    moved = True
+                    cell_dict[(x, y+1)].val = col
+                if c and c.val == 'b' and col == 'B':
+                    moved = True
+                    Score.scoreB += 10
+                    cell_dict[(x, y+1)].val = col
+
+                if c and c.val == 'r' and col == 'R':
+                    Score.scoreR += 10
+                    cell_dict[(x, y+1)].val = col
+                    moved = True
+
+            if val[i] == 'L':
+                x = X[i]
+                y = Y[i]
+                c = cell_dict.get((x, y-1))
+                if c and c.val == '.':
+                    cell_dict[(x, y-1)].val = col
+                    moved = True
+
+                if c and c.val == 'b' and col == 'B':
+                    Score.scoreB += 10
+                    cell_dict[(x, y-1)].val = col
+                    moved = True
+
+                if c and c.val == 'r' and col == 'R':
+                    Score.scoreR += 10
+                    cell_dict[(x, y-1)].val = col
+                    moved = True
+
+            if moved:
+                cell_dict[(x, y)] = Cell(x,y, '.')
