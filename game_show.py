@@ -1,5 +1,9 @@
 import pygame
+from score_class import Score
 cell_dict = dict()
+
+true_info = []
+false_info = []
 red = (255, 0, 0)
 light_red = (150,0,0)
 light_blue = (0,0,150)
@@ -15,8 +19,8 @@ m = 10
 n = 10
 
 cells = []
-
-
+dark_red = (90,0,30)
+dark_blue = (0,20,90)
 class Cell:
     def __init__(self, x, y, val):
         self.x = x
@@ -25,28 +29,46 @@ class Cell:
         self.visit = []
 
 
-def init_board():
-    import random
-    for i in range(m):
-        for j in range(n):
-            c = '.'
-            r = random.random()
-            if r < 0.04:
-                c = 'B'
-            elif r > 0.96:
-                c = 'R'
-            elif r > 0.90:
-                c = 'r'
-            elif r < 0.10:
-                c = 'b'
-            elif r < 0.30:
-                c = '#'
-            elif r > 0.85:
-                c = 'g'
-            p = Cell(i, j, c)
-            cell_dict[(i,j)] = []
-            cell_dict[(i, j)] = p
-            cells.append(p)
+def init_board(random_map='0'):
+
+    if random_map != '0':
+        import json
+        maps = json.load(open("map1.txt"))
+        map= maps.get(random_map)
+        if not map:
+            random_map = '0'
+        else:
+            t = 0
+            for i in range(1, m+1):
+                for j in range(1, n+1):
+                    c = map[t]
+                    t += 1
+                    p = Cell(i, j, c)
+                    cell_dict[(i,j)] = []
+                    cell_dict[(i, j)] = p
+                    cells.append(p)
+    if random_map == '0':
+        import random
+        for i in range(1, m+1):
+            for j in range(1, n+1):
+                c = '.'
+                r = random.random()
+                if r < 0.04:
+                    c = 'B'
+                elif r > 0.96:
+                    c = 'R'
+                elif r > 0.90:
+                    c = 'r'
+                elif r < 0.10:
+                    c = 'b'
+                elif r < 0.30:
+                    c = '#'
+                elif r > 0.85:
+                    c = 'g'
+                p = Cell(i, j, c)
+                cell_dict[(i,j)] = []
+                cell_dict[(i, j)] = p
+                cells.append(p)
 
 
 def update_light():
@@ -92,9 +114,11 @@ def show_game():
     #print('behamdellah')
     gameDisplay = pygame.display.set_mode((600,600))
     #print(':DDDDDD')
-    pygame.display.set_caption("GAME!")
+    pygame.display.set_caption(('Blue Score: %d ,  Red Score %d' % (Score.scoreB, Score.scoreR)))
     gameExit = False
     #while not gameExit:
+    print('TRUEE', true_info)
+    print('FALSE', false_info)
     for p in range(1):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -103,8 +127,6 @@ def show_game():
 
 
         update_light()
-
-
 
         for i in range(0, 600, 60):
 
@@ -140,6 +162,37 @@ def show_game():
                     pygame.draw.polygon(gameDisplay, light_blue, [[i+30, j+10], [i+50, j+30], [i+30, j+50], [i+10,j+30]], 0)
                 if cel and cel.val == 'g':
                     pygame.draw.polygon(gameDisplay, green, [[i+30, j+10], [i+50, j+30], [i+30, j+50], [i+10,j+30]], 0)
+        for i in range(len(false_info)):
+            x = false_info[i][0]
+            y = false_info[i][1]
+            col = false_info[i][2]
+            #print('BUUUUUUG', x, y)
+
+            j = (y-1) * 60
+            i = (x-1) * 60
+            if col == 'B':
+                pygame.draw.line(gameDisplay, dark_blue, (i, j), (i+60, j+60))
+                pygame.draw.line(gameDisplay, dark_blue, (i, j+60), (i+60, j))
+
+            else:
+                pygame.draw.line(gameDisplay, dark_red, (i, j+60), (i+60, j))
+                pygame.draw.line(gameDisplay, dark_red, (i, j), (i+60, j+60))
+
+        for i in range(len(true_info)):
+            x = int(true_info[i][0])
+            y = int(true_info[i][1])
+            col = true_info[i][2]
+
+            j = (y-1) * 60
+            i = (x-1) * 60
+            if col == 'B':
+                pygame.draw.line(gameDisplay, dark_blue, (i+0, j+30), (i+20, j+60))
+                pygame.draw.line(gameDisplay, dark_blue, (i+20, j+60), (i+60, j+60))
+            else:
+
+                pygame.draw.line(gameDisplay, dark_red, (i+0, j+30), (i+20, j+60))
+                pygame.draw.line(gameDisplay, dark_red, (i+20, j+60), (60+i, j))
+
         pygame.display.update()
         #circle(Surface, color, pos, radius, width=0)
 

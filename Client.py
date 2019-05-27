@@ -3,7 +3,7 @@ from client_utils import send_info, get_info, get_player_state, get_vision, set_
 import socket
 
 HOST = '127.0.0.1'  # The server's hostname or IP address
-PORT = 20002  # The port used by the server
+PORT = 20007  # The port used by the server
 
 
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
@@ -15,7 +15,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         out_info = send_info()
         s.sendall(pickle.dumps(out_info))
         print("sent")
-        data = pickle.loads(s.recv(1024))
+        data = pickle.loads(s.recv(4194304))
         header = data.get("header")
         if header == 'INFO':
             info = get_info(data)
