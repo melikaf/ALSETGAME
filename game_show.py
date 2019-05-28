@@ -21,6 +21,18 @@ n = 10
 cells = []
 dark_red = (90,0,30)
 dark_blue = (0,20,90)
+
+'''
+In this file we make a gui for the game.
+'''
+
+'''
+Each cell of our board is a Cell that has a x, y that is the location indicator of game and a value that is a char
+shows that what is on that cell. It could be '.' (means empty), '#' (means block), 'b' (means blue seed),
+'B' means blue player, 'r' (means red seed) and 'R' (means red player).
+'''
+
+
 class Cell:
     def __init__(self, x, y, val):
         self.x = x
@@ -28,12 +40,17 @@ class Cell:
         self.val = val
         self.visit = []
 
+'''
+this function make the initial state of the board. It could be randomly (when the input is '0')
+or loading a map (when you give the input the map file name)
+'''
+
 
 def init_board(random_map='0'):
 
     if random_map != '0':
         import json
-        maps = json.load(open("map1.txt"))
+        maps = json.load(open(random_map))
         map= maps.get(random_map)
         if not map:
             random_map = '0'
@@ -69,6 +86,11 @@ def init_board(random_map='0'):
                 cell_dict[(i,j)] = []
                 cell_dict[(i, j)] = p
                 cells.append(p)
+
+'''
+We do not use this function for now, but the goal of this function is to color the visible cells of the board with
+light blue of light red based on it can be seen in that round for teams. [But it did not work well!]
+'''
 
 
 def update_light():
@@ -107,11 +129,14 @@ def update_light():
                             c.visit.append('R')
                     cell_dict[(i,j)] = c
 
+'''
+This function is the game gui. ploting some shapes and line to show the game. it will called in each round.
+'''
+
 
 def show_game():
 
     #init_board()
-    #print('behamdellah')
     gameDisplay = pygame.display.set_mode((600,600))
     #print(':DDDDDD')
     pygame.display.set_caption(('Blue Score: %d ,  Red Score %d' % (Score.scoreB, Score.scoreR)))
