@@ -14,6 +14,13 @@ PORT = 20007  # Port to listen on (non-privileged ports are > 1023)
 lock1 = threading.Lock()
 
 
+'''
+
+In this file the communication between server and client will be handled.
+
+'''
+
+
 def communicate_with_clients(con1, con2):
     #while True:
         num = 0
@@ -72,7 +79,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     con1, addr = s.accept()
     con2, addr2 = s.accept()
 
-    init_board('map1')
+    init_board('map1.txt')
 
     with con1 and con2:
         try:

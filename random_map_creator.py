@@ -1,3 +1,8 @@
+'''
+By changing and running this file you can make a new map and save it as a file, then load it in init_game if you want.
+'''
+
+
 import random
 import json
 m = 10

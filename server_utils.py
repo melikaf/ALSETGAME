@@ -6,6 +6,13 @@ n = 10
 m = 10
 
 
+'''
+
+The server side logic of the game can be found here.
+
+'''
+
+
 def check_and_send_info(data, con, col):
     x = data['X']
     y = data['Y']

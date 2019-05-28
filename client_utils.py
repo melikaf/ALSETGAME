@@ -4,6 +4,13 @@ import pickle
 my_cells = []
 
 
+'''
+
+The client side logic of the game can be found here. Students only need to change this function to make their own logic.
+
+'''
+
+
 class Cell:
     def __init__(self, x, y, val):
         self.x = x
