@@ -11,3 +11,5 @@ In each round each team should make a decision to move each of their players one
 After some rounds they score will be combination of number of seeds their player collected and the number of seeds the other team collected (with more value for theirselves seeds). Within the information, they can 
 send each other either true information or false information to gain the green ones for themselves and based on the information they got and they learn during the game
 they should make the best desicion for their players in each round. This could be a cooperative game that run as a league on number of teams and the team with the highest score will be the winner.
+
+It can also have a story line that the red players are the fire fighters, blue players are ambulances, and after a big earthquake in the city they need to save the people as many as they can and they can help each other with passing valuable and true information.
